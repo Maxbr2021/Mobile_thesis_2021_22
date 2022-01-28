@@ -84,21 +84,27 @@ df_psk12 = df[col_names[-2:]][['PSK12']].copy()
 ############## Plot correlation heatmaps ###########################
 ####################################################################
 
-# correlation of whole dataset
 cols = col_names[:21]
 cols.extend(col_names[-2:])
 correlation = round(df[cols].corr(),2)
-plt.figure(figsize=(16, 12))
-heatmap = sns.heatmap(correlation, annot=True, linewidths=0, vmin=-0.75, vmax=0.75, cmap="RdBu_r")
-# plt.savefig('corr_heathap.png')
+mask = np.triu(np.ones_like(correlation, dtype=bool))
+plt.figure(figsize=(16, 14))
+heatmap = sns.heatmap(correlation, annot=True, linewidths=0, vmin=-0.75, vmax=0.75, cmap="RdBu_r",cbar_kws={'label':'Pearson correlation coefficients'})
+heatmap.set(xlabel='Mobility indicators')
+heatmap.set(ylabel='Mobility indicators')
+plt.savefig('corr_heathap_neu.png')
 
-# correlation of sf12 questions with all indicators (not showing correlation between sf12 questions themself)
 cols2 = col_names[0:21]
-cols2.extend(col_names[21:-2])
+cols2.extend(col_names[21:-9])
+cols2.extend(col_names[-7:-2])
+sf12_q = cols2[-10:]
 correlation2 = round(df2[cols2].corr(),2)
-plt.figure(figsize=(16, 12))
-heatmap = sns.heatmap(correlation2[col_names[21:-2]][:21], annot=True, linewidths=0, vmin=-0.75, vmax=0.75, cmap="RdBu_r")
-# plt.savefig('corr_sf12_heathap.png')
+plt.figure(figsize=(16, 14))
+heatmap = sns.heatmap(correlation2[sf12_q][:21], annot=True, linewidths=0, vmin=-0.75, vmax=0.75, cmap="RdBu_r",cbar_kws={'label':'Pearson correlation coefficients'})
+heatmap.set(xlabel='Mobility indicators')
+heatmap.set(ylabel='Mobility indicators')
+plt.savefig('corr_sf12_heathap_neu.png')
+
 
 ############## build the multiple liner regression model ###########
 ####################################################################
