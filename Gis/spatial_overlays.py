@@ -5,7 +5,7 @@ import datetime
 import shapely
 import osmnx as ox
 import mplleaflet
-from Osm import basic
+import basic
 
 ### create point buffer from geodf with given datum ###
 def create_point_buffer_wgs84(gdf,dist,proj=None):
