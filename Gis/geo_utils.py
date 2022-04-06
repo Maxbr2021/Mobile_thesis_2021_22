@@ -120,4 +120,19 @@ def polygon_to_gdf(gdf_p,proj):
     gdf = gpd.GeoDataFrame(geometry=s).set_crs(proj)
     return gdf
 
+def spatial_overlays(buffer,geo_df,how='intersection',merge_polygon=True):
+    if geo_df.crs == None or geo_df.crs != buffer.crs:
+        geo_df_proj = ox.project_gdf(geo_df,to_crs=buffer.crs) #make sure both are in the same crs
+    else:
+        geo_df_proj = geo_df
+    if merge_polygon == True:
+        overlay = gpd.overlay(buffer,polygon_to_gdf(geo_df_proj,geo_df_proj.crs),how=how,keep_geom_type=False)
+    else:
+        overlay = gpd.overlay(buffer,geo_df_proj,how=how,keep_geom_type=False) # only use if df2 are same geomety types for sure
+    return overlay
 
+def create_point_buffer(lon_lat,dist,proj=None):
+    point = build_geo_df(lon_lat)
+    point_proj = ox.project_gdf(point,to_crs=proj)
+    buffer = gpd.GeoDataFrame(geometry=point_proj.buffer(dist)).set_crs(point_proj.crs)
+    return buffer

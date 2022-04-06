@@ -6,7 +6,7 @@ import shapely
 import geopandas as gpd
 import os
 import mplleaflet
-import basic
+import geo_utils as gu
 import reachability
 import networkx as nx
 from shapely.geometry import Point
@@ -147,7 +147,7 @@ def compose(G,G2):
 
 ### load graph in bbox from disc
 def load_graph_in_bbox(path,point,dist=2000):
-    buff = basic.create_point_buffer(point,dist) #basic aka metric
+    buff = gu.create_point_buffer(point,dist) 
     buff_proj = buff.to_crs("epsg:4326")
     nodes = gpd.read_file(f"{path}/nodes.shp",bbox=buff_proj).set_index('osmid',drop=True)
     edges = gpd.read_file(f"{path}/edges.shp",bbox=buff_proj).set_index(['u','v','key'],drop=True)
@@ -176,7 +176,7 @@ def load_graph_in_bbox(path,point,dist=2000):
 
 ###load osm data around home locaion of the user form disc
 def load_data_around_home(path,point,dist=500):
-    buff = basic.create_point_buffer(point,dist) #basic aka metric
+    buff = gu.create_point_buffer(point,dist) 
     buff_proj = buff.to_crs('epsg:4326')
     data = gpd.read_file(path,bbox=buff_proj).set_index('geom_type',drop=True)
     return data
@@ -195,7 +195,7 @@ def load_data_in_bbox(path,bbox=None,all_data=True):
 def load_graph_from_pickle(home,dist=1000):
     G = nx.read_gpickle('Gis_layers/roads_walk_Berlin_Havelland.pkl')
     nodes = ox.graph_to_gdfs(G, edges=False)
-    buff = create_point_buffer(home,dist) #basic aka metric
+    buff = gu.create_point_buffer(home,dist) 
     buff_proj = buff.to_crs("epsg:4326")
     intersecting_nodes = nodes[nodes.intersects(buff_proj['geometry'][0])].index
     G_sub = G.subgraph(intersecting_nodes)
